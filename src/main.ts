@@ -14,13 +14,14 @@ async function bootstrap() {
     }),
   );
 
-  app.setGlobalPrefix('api/v1');
+  const globalPrefix = 'api/v1';
+  app.setGlobalPrefix(globalPrefix);
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
 
   logger.log(
-    `🚀 8eyond Infinite Backend is running on: http://localhost:${port}/api`,
+    `🚀 8eyond Infinite Backend is running on: http://localhost:${port}/${globalPrefix}`,
   );
 }
 
