@@ -9,4 +9,4 @@ export const RegisterUserSchema = z.object({
   }),
 });
 
-export type RegisterUserDto = z.infer<typeof RegisterUserSchema>;
+export type RegisterUserRequest = z.infer<typeof RegisterUserSchema>;

@@ -1,4 +1,4 @@
-import { User as PrismaUser } from '../../../../../shared/infrastructure/prisma/generated';
+import { User as PrismaUser } from '@prisma-generated/client';
 import { User } from '../../domain/entities/user.entity';
 import { UserId } from '../../domain/value-objects/user-id.vo';
 
