@@ -11,6 +11,28 @@ services:
       - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - forge-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nestjs-api
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}?schema=public
+      PORT: 3000
+    depends_on:
+      - postgres
+    networks:
+      - forge-network
+
+networks:
+  forge-network:
+    driver: bridge
 
 volumes:
   postgres_data:
