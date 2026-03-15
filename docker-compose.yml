@@ -12,7 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - forge-network
+      - beyond-network
 
   api:
     build:
@@ -28,10 +28,10 @@ services:
     depends_on:
       - postgres
     networks:
-      - forge-network
+      - beyond-network
 
 networks:
-  forge-network:
+  beyond-network:
     driver: bridge
 
 volumes:
