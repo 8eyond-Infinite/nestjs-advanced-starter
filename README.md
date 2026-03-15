@@ -1,98 +1,257 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 8eyond Infinite NestJS Advanced Starter
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A production-ready NestJS boilerplate with **Domain-Driven Design (DDD)**, **Hexagonal Architecture (Ports & Adapters)**, **Prisma ORM**, and **Docker** support — built for teams who care about scalability, maintainability, and code quality.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 📋 Table of Contents
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Architecture Overview](#-architecture-overview)
+- [Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Environment Variables](#environment-variables)
+  - [Running the App](#running-the-app)
+  - [Running with Docker](#running-with-docker)
+- [Database](#-database)
+- [Code Quality](#-code-quality)
+- [License](#-license)
 
-## Project setup
+---
 
-```bash
-$ npm install
+## ✨ Features
+
+- ✅ **Domain-Driven Design (DDD)** — clear separation of domain, application, and infrastructure layers
+- ✅ **Hexagonal Architecture (Ports & Adapters)** — domain at the center, isolated from frameworks and databases via explicit ports and adapters
+- ✅ **Prisma ORM** — type-safe database access with auto-generated client
+- ✅ **Value Objects** — strongly-typed domain primitives (e.g. `UserId`)
+- ✅ **Repository Pattern** — abstract domain repositories with Prisma implementations
+- ✅ **Domain Mappers** — clean mapping between Prisma models and domain entities
+- ✅ **Shared Module** — reusable infrastructure services (Prisma, base value objects)
+- ✅ **Docker & Docker Compose** — containerized development and deployment
+- ✅ **ESLint + Prettier** — enforced code style on every commit via Husky pre-commit hooks
+- ✅ **TypeScript** — strict typing throughout the entire codebase
+
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | [NestJS](https://nestjs.com/) |
+| Language | TypeScript |
+| ORM | [Prisma](https://www.prisma.io/) |
+| Runtime | Node.js |
+| Container | Docker / Docker Compose |
+| Linter | ESLint (flat config) |
+| Formatter | Prettier |
+| Git Hooks | Husky |
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── app.module.ts               # Root application module
+├── main.ts                     # Application entry point
+│
+├── contexts/                   # Bounded contexts (DDD)
+│   └── iam/                    # Identity & Access Management context
+│       ├── iam.module.ts
+│       └── users/
+│           ├── domain/         # Pure domain logic (no framework dependencies)
+│           │   ├── user.repository.ts          # Abstract repository interface
+│           │   ├── entities/
+│           │   │   └── user.entity.ts          # User domain entity
+│           │   └── value-objects/
+│           │       └── user-id.vo.ts           # UserId value object
+│           └── infrastructure/ # Framework & DB implementations
+│               ├── mappers/
+│               │   └── user.mapper.ts          # Prisma ↔ Domain mapper
+│               └── repositories/
+│                   └── prisma-user.repository.ts  # Prisma implementation
+│
+└── shared/                     # Cross-cutting concerns
+    ├── shared.module.ts
+    ├── infrastructure/
+    │   └── prisma/
+    │       └── prisma.service.ts   # PrismaClient wrapper
+    └── value-objects/
+        └── base-id.vo.ts           # Base class for ID value objects
+
+prisma/
+└── schema.prisma               # Database schema definition
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## 🏛 Architecture Overview
 
-# watch mode
-$ npm run start:dev
+This starter combines **Domain-Driven Design (DDD)** with **Hexagonal Architecture (Ports & Adapters)**. The domain sits at the center and is completely isolated from the outside world — it never depends on NestJS, Prisma, or any external library. All communication flows through **Ports** (interfaces defined in the domain) and **Adapters** (concrete implementations in the infrastructure layer).
 
-# production mode
-$ npm run start:prod
+```
+                        ┌─────────────────────────────────┐
+                        │           DOMAIN CORE            │
+                        │                                  │
+   ┌────────────┐       │  Entities · Value Objects        │       ┌──────────────────┐
+   │  NestJS    │──────▶│                                  │──────▶│  Prisma Database │
+   │ Controllers│       │  «Port»                          │       │  (Adapter)       │
+   │ (Adapter)  │       │  UserRepository (interface)      │       │  PrismaUser      │
+   └────────────┘       │                                  │       │  Repository      │
+                        │  No framework / DB dependencies  │       └──────────────────┘
+                        └─────────────────────────────────┘
 ```
 
-## Run tests
+### Ports & Adapters in This Project
+
+| Concept | Role | Example |
+|---|---|---|
+| **Port** | Interface defined in the domain layer | `user.repository.ts` |
+| **Adapter (Driven)** | Infrastructure implementation of a Port | `prisma-user.repository.ts` |
+| **Mapper** | Translates between DB models and domain entities | `user.mapper.ts` |
+| **Value Object** | Strongly-typed domain primitive with built-in validation | `user-id.vo.ts`, `base-id.vo.ts` |
+| **Bounded Context** | Self-contained domain module | `contexts/iam/` |
+
+### Key Design Decisions
+
+- **Domain entities** are plain TypeScript classes — zero dependency on Prisma or NestJS.
+- **Repository interfaces (Ports)** live inside the domain layer, not the infrastructure layer. The domain dictates the contract; infrastructure fulfills it.
+- **Prisma repositories (Adapters)** implement domain ports and are registered in NestJS DI as the concrete providers.
+- **Mappers** handle all conversion between Prisma models and domain entities, so neither layer is polluted by the other's shape.
+- **Value Objects** (like `UserId`) encapsulate validation and identity logic, preventing primitive obsession.
+- **Bounded contexts** under `src/contexts/` allow the codebase to scale horizontally into independent domain modules without coupling.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** >= 18
+- **npm** >= 9
+- **Docker** & **Docker Compose** (optional, for containerized setup)
+- A supported database (PostgreSQL recommended — configure via `DATABASE_URL`)
+
+### Installation
 
 ```bash
-# unit tests
-$ npm run test
+# Clone the repository
+git clone https://github.com/8eyond/infinite-nestjs-advanced-starter.git
+cd infinite-nestjs-advanced-starter
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Install dependencies
+npm install
 ```
 
-## Deployment
+### Environment Variables
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Copy the example env file and fill in your values:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+cp .env.example .env
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+| Variable | Description | Example |
+|---|---|---|
+| `DATABASE_URL` | Prisma connection string | `postgresql://user:pass@localhost:5432/mydb` |
+| `PORT` | HTTP port the app listens on | `3000` |
 
-## Resources
+> See `.env.example` for the full list of required variables.
 
-Check out a few resources that may come in handy when working with NestJS:
+### Running the App
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+# Development (watch mode)
+npm run start:dev
 
-## Support
+# Production build
+npm run build
+npm run start:prod
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Debug mode
+npm run start:debug
+```
 
-## Stay in touch
+### Running with Docker
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+# Start all services (app + database)
+docker-compose up --build
 
-## License
+# Run in detached mode
+docker-compose up -d --build
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Stop all services
+docker-compose down
+```
+
+The app will be available at `http://localhost:3000` by default.
+
+---
+
+## 🗄 Database
+
+This project uses **Prisma** as the ORM. The schema is defined in `prisma/schema.prisma`.
+
+```bash
+# Push schema changes to the database (development)
+npx prisma db push
+
+# Generate Prisma client after schema changes
+npx prisma generate
+
+# Open Prisma Studio (GUI for your database)
+npx prisma studio
+
+# Run migrations (production)
+npx prisma migrate deploy
+
+# Create a new migration
+npx prisma migrate dev --name <migration_name>
+```
+
+> **Note:** Always run `npx prisma generate` after modifying `schema.prisma` to keep the type-safe client in sync.
+
+---
+
+## 🧹 Code Quality
+
+### Linting
+
+```bash
+# Run ESLint
+npm run lint
+
+# Auto-fix lint issues
+npm run lint -- --fix
+```
+
+### Formatting
+
+```bash
+# Check formatting
+npm run format
+
+# Auto-format with Prettier
+npx prettier --write .
+```
+
+### Git Hooks
+
+Husky is configured to run lint and format checks automatically on every `git commit` via the `.husky/pre-commit` hook — keeping the codebase consistently clean without manual effort.
+
+---
+
+## 📄 License
+
+This project is licensed under the terms specified in the [LICENSE](./LICENSE) file.
+
+---
+
+<div align="center">
+  Built with ❤️ by <a href="https://github.com/trhgatu"><strong>trhgatu</strong></a>
+</div>
