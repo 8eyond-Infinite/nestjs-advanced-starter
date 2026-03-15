@@ -14,7 +14,7 @@ async function bootstrap() {
     }),
   );
 
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api/v1');
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
@@ -24,7 +24,6 @@ async function bootstrap() {
   );
 }
 
-// Xử lý lỗi khởi động mà không cần Top-level await
 bootstrap().catch((err) => {
   console.error('💥 Critical Error during system startup:', err);
   process.exit(1);

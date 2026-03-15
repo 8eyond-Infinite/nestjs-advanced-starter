@@ -37,3 +37,7 @@ Thumbs.db
 
 *.db
 *.sqlite
+
+prisma/migrations/
+
+src/shared/infrastructure/prisma/generated/
