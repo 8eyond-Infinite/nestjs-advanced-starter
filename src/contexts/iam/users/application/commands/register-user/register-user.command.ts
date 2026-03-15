@@ -1,4 +1,5 @@
 import { Command } from '@nestjs/cqrs';
+import { User } from '../../../domain/entities/user.entity';
 
 export interface RegisterUserPayload {
   readonly email: string;
@@ -7,7 +8,7 @@ export interface RegisterUserPayload {
   readonly lastName?: string;
 }
 
-export class RegisterUserCommand extends Command<{ id: string }> {
+export class RegisterUserCommand extends Command<User> {
   constructor(public readonly payload: RegisterUserPayload) {
     super();
   }

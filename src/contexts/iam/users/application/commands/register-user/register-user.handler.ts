@@ -18,7 +18,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
     private readonly publisher: EventPublisher,
   ) {}
 
-  async execute(command: RegisterUserCommand): Promise<{ id: string }> {
+  async execute(command: RegisterUserCommand): Promise<User> {
     const { email, password } = command.payload;
 
     try {
@@ -39,7 +39,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
       await this.userRepository.save(user);
       user.commit();
 
-      return { id: user.id.value };
+      return user;
     } catch (error) {
       if (error instanceof ConflictException) throw error;
       console.error('Registration flow failed:', error);
