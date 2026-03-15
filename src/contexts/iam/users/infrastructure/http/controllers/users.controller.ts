@@ -6,19 +6,27 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { JwtService } from '@nestjs/jwt';
 import { RegisterUserCommand } from '../../../application/commands/register-user/register-user.command';
+import { LoginQuery } from '../../../application/queries/login/login.query';
 import {
   RegisterUserSchema,
   RegisterUserRequest,
-} from '../requests/register-user.request';
+  LoginSchema,
+  LoginRequest,
+} from '../requests';
 import { ZodValidationPipe } from '../../../../../../shared/infrastructure/pipes/zod-validation.pipe';
 import { User } from '../../../domain/entities/user.entity';
 import { UserResponse } from '../responses/user.response';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
@@ -28,5 +36,22 @@ export class UsersController {
       new RegisterUserCommand(req),
     );
     return UserResponse.fromEntity(userEntity);
+  }
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ZodValidationPipe(LoginSchema))
+  async login(@Body() req: LoginRequest) {
+    const userEntity = await this.queryBus.execute<LoginQuery, User>(
+      new LoginQuery(req),
+    );
+    const payload = {
+      sub: userEntity.id.value,
+      email: userEntity.email,
+    };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+      user: UserResponse.fromEntity(userEntity),
+    };
   }
 }
