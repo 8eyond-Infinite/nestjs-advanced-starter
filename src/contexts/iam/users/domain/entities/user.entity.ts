@@ -20,6 +20,10 @@ export class User extends AggregateRoot<IEvent> {
     this._passwordHash = newHash;
   }
 
+  static create(id: string, email: string, passwordHash: string): User {
+    return new User(UserId.create(id), email, passwordHash, new Date());
+  }
+
   register() {
     this.apply(new UserRegisteredEvent(this.id.value, this.email));
   }
