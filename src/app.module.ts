@@ -6,6 +6,5 @@ import { IamModule } from './contexts/iam/iam.module';
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }), SharedModule, IamModule],
   controllers: [],
-  providers: [],
 })
 export class AppModule {}

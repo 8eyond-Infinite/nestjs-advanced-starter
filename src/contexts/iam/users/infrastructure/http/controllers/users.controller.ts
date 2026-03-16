@@ -32,8 +32,9 @@ export class UsersController {
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ZodValidationPipe(RegisterUserSchema))
   async register(@Body() req: RegisterUserRequest): Promise<UserResponse> {
+    const { email, password } = req;
     const userEntity = await this.commandBus.execute<RegisterUserCommand, User>(
-      new RegisterUserCommand(req),
+      new RegisterUserCommand({ email, password }),
     );
     return UserResponse.fromEntity(userEntity);
   }
