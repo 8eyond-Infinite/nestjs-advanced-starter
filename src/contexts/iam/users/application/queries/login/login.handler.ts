@@ -1,20 +1,20 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { LoginQuery } from './login.query';
-import { UserRepository } from '../../../domain/user.repository';
+import { UserRepositoryPort } from '../../../application/ports/user.repository.port';
 import { User } from '../../../domain/entities/user.entity';
-import { PasswordHasher } from '../../ports/password-hasher.port'; // Dùng Port
+import { PasswordHasher } from '../../ports/password-hasher.port';
 import { InvalidCredentialsException } from '../../../domain/exceptions/invalid-credentials.exception';
 
 @QueryHandler(LoginQuery)
 export class LoginHandler implements IQueryHandler<LoginQuery> {
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly userRepositoryPort: UserRepositoryPort,
     private readonly passwordHasher: PasswordHasher,
   ) {}
 
   async execute(query: LoginQuery): Promise<User> {
     const { email, password } = query.payload;
-    const user = await this.userRepository.findByEmail(email);
+    const user = await this.userRepositoryPort.findByEmail(email);
     if (!user) {
       throw new InvalidCredentialsException();
     }

@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler, EventPublisher } from '@nestjs/cqrs';
 
 import { RegisterUserCommand } from './register-user.command';
-import { UserRepository } from '../../../domain/user.repository';
+import { UserRepositoryPort } from '../../ports/user.repository.port';
 import { User } from '../../../domain/entities/user.entity';
 import { PasswordHasher } from '../../ports/password-hasher.port';
 import { IdGenerator } from '../../ports/id-generator.port';
@@ -10,7 +10,7 @@ import { IdentityAlreadyExistsException } from 'src/contexts/iam/users/domain/ex
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand> {
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly userRepositoryPort: UserRepositoryPort,
     private readonly publisher: EventPublisher,
     private readonly passwordHasher: PasswordHasher,
     private readonly idGenerator: IdGenerator,
@@ -19,7 +19,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
   async execute(command: RegisterUserCommand): Promise<User> {
     const { email, password } = command.payload;
 
-    const existingUser = await this.userRepository.findByEmail(email);
+    const existingUser = await this.userRepositoryPort.findByEmail(email);
     if (existingUser) {
       throw new IdentityAlreadyExistsException(email);
     }
@@ -33,7 +33,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand>
 
     user.register();
 
-    await this.userRepository.save(user);
+    await this.userRepositoryPort.save(user);
     user.commit();
 
     return user;

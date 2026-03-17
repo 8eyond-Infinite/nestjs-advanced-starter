@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule } from '@nestjs/jwt';
 
-import { UserRepository } from './users/domain/user.repository';
+import { UserRepositoryPort } from './users/application/ports/user.repository.port';
 import { IdGenerator } from './users/application/ports/id-generator.port';
 import { PasswordHasher } from './users/application/ports/password-hasher.port';
 
@@ -32,7 +32,7 @@ import { UsersController } from './users/infrastructure/http/controllers/users.c
     ...UserEventHandlers,
     ...UserQueryHandlers,
     {
-      provide: UserRepository,
+      provide: UserRepositoryPort,
       useClass: PrismaUserRepository,
     },
     {
@@ -44,6 +44,6 @@ import { UsersController } from './users/infrastructure/http/controllers/users.c
       useClass: UuidGeneratorAdapter,
     },
   ],
-  exports: [UserRepository, PasswordHasher, IdGenerator],
+  exports: [UserRepositoryPort, PasswordHasher, IdGenerator],
 })
 export class IamModule {}
